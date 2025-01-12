@@ -1,5 +1,6 @@
 package com.focussystems.volumecontrolviasms
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,8 @@ import android.telephony.SmsMessage
 import android.util.Log
 import android.widget.Toast
 import android.media.AudioManager
+import android.os.Build
+import android.provider.Settings
 
 class SmsReceiver : BroadcastReceiver() {
 
@@ -58,10 +61,22 @@ class SmsReceiver : BroadcastReceiver() {
         } else if (message.contains("Volume 75", ignoreCase = true)) {
             setVolume(context, 75)
         }
-        // Handle other volume control commands here...
     }
 
     private fun setVolume(context: Context?, volumeLevel: Int) {
+        val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Check the current DND mode
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+            } catch (e: SecurityException) {
+                Log.e(TAG, "Error changing DND mode: ${e.message}")
+                Toast.makeText(context, "Failed to change DND mode", Toast.LENGTH_SHORT).show()
+            }
+            Log.d(TAG, "DND mode set to off.")
+        }
+
         val audioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
         val volume = (volumeLevel * maxVolume) / 100

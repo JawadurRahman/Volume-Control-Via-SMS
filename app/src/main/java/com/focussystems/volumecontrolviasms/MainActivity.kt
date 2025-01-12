@@ -1,6 +1,7 @@
 package com.focussystems.volumecontrolviasms
 
 import android.os.Bundle
+import android.Manifest
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -11,51 +12,72 @@ import android.view.Menu
 import android.view.MenuItem
 import com.focussystems.volumecontrolviasms.databinding.ActivityMainBinding
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var switchRemoteControl: Switch
-    private lateinit var authorizedNumbersEditText: EditText
-    private lateinit var buttonSaveSettings: Button
+    private val TAG = "VolumeControlSMSReceiver"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Request SMS permission if not granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECEIVE_SMS), 1)
+        }
+
         switchRemoteControl = findViewById(R.id.switchRemoteControl)
-        authorizedNumbersEditText = findViewById(R.id.authorizedNumbersEditText)
-        buttonSaveSettings = findViewById(R.id.buttonSaveSettings)
 
         // Load saved settings when the app starts
         loadSettings()
 
-        buttonSaveSettings.setOnClickListener {
-            // Save settings when the "Save Settings" button is clicked
-            val prefs = getSharedPreferences("appPrefs", MODE_PRIVATE)
-            val editor = prefs.edit()
-
-            // Save whether remote control is enabled
-            editor.putBoolean("remote_control_enabled", switchRemoteControl.isChecked)
-
-            // Save authorized numbers
-            val numbers = authorizedNumbersEditText.text.toString().split(",").map { it.trim() }
-            editor.putStringSet("authorized_numbers", numbers.toSet())
-
-            editor.apply()
+        // Save settings when the switch state is changed
+        switchRemoteControl.setOnCheckedChangeListener { _, isChecked ->
+            Log.d(TAG, "Toggled!")
+            saveSettings(isChecked)
+            val message = if (isChecked) "Remote volume control enabled." else "Remote volume control disabled."
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun loadSettings() {
         val prefs = getSharedPreferences("appPrefs", MODE_PRIVATE)
         val isRemoteControlEnabled = prefs.getBoolean("remote_control_enabled", false)
-        val authorizedNumbers = prefs.getStringSet("authorized_numbers", emptySet())?.joinToString(", ")
-
         switchRemoteControl.isChecked = isRemoteControlEnabled
-        authorizedNumbersEditText.setText(authorizedNumbers)
     }
+
+    private fun saveSettings(isChecked: Boolean) {
+        val prefs = getSharedPreferences("appPrefs", MODE_PRIVATE)
+        val editor = prefs.edit()
+
+        // Save whether remote control is enabled
+        editor.putBoolean("remote_control_enabled", isChecked)
+
+        editor.apply() // Save the preferences
+    }
+
+    // Override onRequestPermissionsResult to handle the result of permission request
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 1) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "SMS permission granted!")
+            } else {
+                Log.d(TAG, "SMS permission denied!")
+            }
+        }
+    }
+
 }
 //class MainActivity : AppCompatActivity() {
 //

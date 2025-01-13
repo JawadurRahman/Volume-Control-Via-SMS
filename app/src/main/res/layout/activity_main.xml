@@ -34,7 +34,8 @@ Volume 0"
         android:id="@+id/switchRemoteControl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enable Remote Volume Control" />
+        android:text="Enable Remote Volume Control"
+        android:trackTint="@color/green_grey"/>
 
     <!-- Spacer for layout -->
     <Space

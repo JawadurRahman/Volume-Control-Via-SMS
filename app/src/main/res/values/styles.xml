@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomSwitchStyle" parent="Widget.Material3.CompoundButton.Switch">
+        <!-- Set the track color based on the switch state -->
+        <item name="trackTint">@color/switch_track_selector</item>
+    </style>
+</resources>

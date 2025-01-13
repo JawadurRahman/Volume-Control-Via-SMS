@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="green_grey">@color/switch_track_selector</color>
+
+    <!-- Green color when the switch is on -->
+    <color name="switch_track_on">#02F217</color> <!-- Green -->
+    <!-- Gray color when the switch is off -->
+    <color name="switch_track_off">#C7B7B7</color> <!-- Gray -->
+
 </resources>

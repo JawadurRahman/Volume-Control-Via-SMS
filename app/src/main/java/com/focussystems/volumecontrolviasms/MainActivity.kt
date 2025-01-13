@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
         // Save settings when the switch state is changed
         switchRemoteControl.setOnCheckedChangeListener { _, isChecked ->
-            Log.d(TAG, "Toggled!")
             saveSettings(isChecked)
             val message = if (isChecked) "Remote volume control enabled." else "Remote volume control disabled."
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

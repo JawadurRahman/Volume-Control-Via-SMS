@@ -77,7 +77,7 @@ class SmsReceiver : BroadcastReceiver() {
             Log.d(TAG, "DND mode set to off.")
         }
 
-        val audioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
         val volume = (volumeLevel * maxVolume) / 100
         audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, 0)

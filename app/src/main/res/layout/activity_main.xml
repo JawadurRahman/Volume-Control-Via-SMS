@@ -19,11 +19,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Control the volume of your device remotely by sending SMS commands."
-        android:textSize="14sp"
         android:layout_marginBottom="24dp"
         android:gravity="center"
-        android:textColor="#555" />
+        android:text="Control the volume of your device remotely by sending either of the following SMS commands.\nVolume 100\n
+Volume 75\n
+Volume 50\n
+Volume 25\n
+Volume 0"
+        android:textColor="#555"
+        android:textSize="14sp" />
 
     <!-- Switch to enable/disable remote volume control -->
     <Switch
